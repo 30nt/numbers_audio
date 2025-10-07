@@ -1,0 +1,36 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: numbers-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./audio_files:/app/audio_files:ro
+    environment:
+      - AUDIO_FILES_DIR=audio_files
+    networks:
+      - numbers-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: numbers-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - numbers-network
+
+networks:
+  numbers-network:
+    driver: bridge
+
+volumes:
+  audio_files:
+    driver: local
